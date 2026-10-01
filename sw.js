@@ -1,22 +1,13 @@
 /* Offline-Speicher für den Wochenplan. Bei jeder neuen Version VERSION hochzählen. */
-const VERSION = "wochenplan-v4";
+const VERSION = "wochenplan-v6";
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./icons/icon-180.png",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/icon-maskable-512.png",
-  "./fonts/barlow-condensed-latin-500-normal.woff2",
-  "./fonts/barlow-condensed-latin-600-normal.woff2",
-  "./fonts/barlow-condensed-latin-700-normal.woff2",
-  "./fonts/barlow-latin-400-normal.woff2",
-  "./fonts/barlow-latin-500-normal.woff2",
-  "./fonts/barlow-latin-600-normal.woff2",
-  "./fonts/barlow-latin-700-normal.woff2",
-  "./fonts/ibm-plex-mono-latin-400-normal.woff2",
-  "./fonts/ibm-plex-mono-latin-500-normal.woff2",
+  "./icons/app-icon-180.png",
+  "./icons/app-icon-192.png",
+  "./icons/app-icon-512.png",
+  "./icons/app-icon-maskable-512.png",
 ];
 
 self.addEventListener("install", e => {

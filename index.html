@@ -7,51 +7,47 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Wochenplan">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#F3F5F8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0E141D" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon-180.png">
-<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/app-icon-180.png">
+<link rel="icon" type="image/png" href="icons/app-icon-192.png">
 <title>Studium & Triathlon</title>
 <style>
-@font-face{font-family:"Barlow";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/barlow-latin-400-normal.woff2) format("woff2")}
-@font-face{font-family:"Barlow";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/barlow-latin-500-normal.woff2) format("woff2")}
-@font-face{font-family:"Barlow";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/barlow-latin-600-normal.woff2) format("woff2")}
-@font-face{font-family:"Barlow";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/barlow-latin-700-normal.woff2) format("woff2")}
-@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/barlow-condensed-latin-500-normal.woff2) format("woff2")}
-@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/barlow-condensed-latin-600-normal.woff2) format("woff2")}
-@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/barlow-condensed-latin-700-normal.woff2) format("woff2")}
-@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2")}
-@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2")}
-/* Layout: Schriftfeld wie auf einer Bauzeichnung als Kopf, darunter das Zeitraster. iPhone: Tagesansicht, iPad: Wochenraster. */
+/* Layout: iOS-nah – großer Titel, weiße Karten auf Grau (dunkel: Schwarz), Zeitraster darunter. iPhone: Tagesansicht. */
 :root{
-  --paper:#F3F5F8; --sheet:#FFFFFF; --we:#F7F9FB; --line:#E3E8EE; --line-soft:#F0F3F6; --line-2:#C6CFDB;
-  --ink:#162030; --ink-2:#556174; --ink-3:#8791A1;
-  --accent:#1E4E8E; --accent-ink:#FFFFFF;
-  --uni-f:#DDE8F6; --uni-e:#2A64A8;
-  --lern-f:#DAEFE3; --lern-e:#1B8454;
-  --train-f:#FCE3D1; --train-e:#CF5713;
-  --fest-f:#E6E8EC; --fest-e:#687283;
-  --ev-f:#EFE6F8; --ev-h:#DFCDF0; --ev-e:#7A3EB1;
-  --warn:#C23029; --warn-f:#FBE5E3; --now:#C23029; --on-now:#FFFFFF;
-  --scrim:rgba(12,18,28,.45); --shadow:0 14px 44px rgba(22,32,48,.2);
-  --f-disp:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
-  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --paper:#F2F2F7; --sheet:#FFFFFF; --we:#FAFAFC; --line:#E5E5EA; --line-soft:#F0F0F4; --line-2:#D1D1D6;
+  --ink:#1C1C1E; --ink-2:#6C6C70; --ink-3:#AEAEB2;
+  --accent:#007AFF; --accent-ink:#FFFFFF;
+  --uni-f:#E6F0FE; --uni-e:#0A7AFF;
+  --lern-f:#E4F6EA; --lern-e:#28A745;
+  --train-f:#FFF0E0; --train-e:#FF8A00;
+  --fest-f:#EFEFF4; --fest-e:#8E8E93;
+  --ev-f:#F3E8FC; --ev-h:#F3E8FC; --ev-e:#AF52DE;
+  --warn:#FF3B30; --warn-f:#FDE8E7; --now:#FF3B30; --on-now:#FFFFFF;
+  --seg:#E4E4EA; --seg-on:#FFFFFF; --seg-on-ink:#1C1C1E; --tab-on:#1C1C1E; --tab-on-ink:#FFFFFF;
+  --scrim:rgba(0,0,0,.35); --shadow:0 10px 40px rgba(0,0,0,.18);
+  --f-disp:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
+  --f-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
+  --f-mono:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --paper:#0E141D; --sheet:#151D29; --we:#121A25; --line:#233042; --line-soft:#1B2533; --line-2:#344357;
-  --ink:#E4EAF2; --ink-2:#A2ADBD; --ink-3:#6F7B8C; --accent:#72A5E8; --accent-ink:#0E141D;
-  --uni-f:#1B2E4A; --uni-e:#71A5E6; --lern-f:#15372A; --lern-e:#55C68F; --train-f:#40261A; --train-e:#F28B4B;
-  --fest-f:#252C36; --fest-e:#9CA5B1; --ev-f:#2B1F3D; --ev-h:#3A2B52; --ev-e:#BC8FEA;
-  --warn:#F2685E; --warn-f:#3B1D1D; --now:#F2685E; --on-now:#FFFFFF; --scrim:rgba(0,0,0,.6); --shadow:0 14px 44px rgba(0,0,0,.5);
+  --paper:#000000; --sheet:#1C1C1E; --we:#161618; --line:#2C2C2E; --line-soft:#242426; --line-2:#38383A;
+  --ink:#FFFFFF; --ink-2:#98989D; --ink-3:#636366; --accent:#0A84FF; --accent-ink:#FFFFFF;
+  --uni-f:#0C2440; --uni-e:#0A84FF; --lern-f:#0D2B18; --lern-e:#30D158; --train-f:#30210A; --train-e:#FF9F0A;
+  --fest-f:#2C2C2E; --fest-e:#8E8E93; --ev-f:#2A1838; --ev-h:#2A1838; --ev-e:#BF5AF2;
+  --warn:#FF453A; --warn-f:#3A1512; --now:#FF453A; --on-now:#FFFFFF;
+  --seg:#2C2C2E; --seg-on:#636366; --seg-on-ink:#FFFFFF; --tab-on:#FFFFFF; --tab-on-ink:#000000;
+  --scrim:rgba(0,0,0,.6); --shadow:0 10px 40px rgba(0,0,0,.6);
   color-scheme:dark}}
 :root[data-theme="dark"]{
-  --paper:#0E141D; --sheet:#151D29; --we:#121A25; --line:#233042; --line-soft:#1B2533; --line-2:#344357;
-  --ink:#E4EAF2; --ink-2:#A2ADBD; --ink-3:#6F7B8C; --accent:#72A5E8; --accent-ink:#0E141D;
-  --uni-f:#1B2E4A; --uni-e:#71A5E6; --lern-f:#15372A; --lern-e:#55C68F; --train-f:#40261A; --train-e:#F28B4B;
-  --fest-f:#252C36; --fest-e:#9CA5B1; --ev-f:#2B1F3D; --ev-h:#3A2B52; --ev-e:#BC8FEA;
-  --warn:#F2685E; --warn-f:#3B1D1D; --now:#F2685E; --on-now:#FFFFFF; --scrim:rgba(0,0,0,.6); --shadow:0 14px 44px rgba(0,0,0,.5);
+  --paper:#000000; --sheet:#1C1C1E; --we:#161618; --line:#2C2C2E; --line-soft:#242426; --line-2:#38383A;
+  --ink:#FFFFFF; --ink-2:#98989D; --ink-3:#636366; --accent:#0A84FF; --accent-ink:#FFFFFF;
+  --uni-f:#0C2440; --uni-e:#0A84FF; --lern-f:#0D2B18; --lern-e:#30D158; --train-f:#30210A; --train-e:#FF9F0A;
+  --fest-f:#2C2C2E; --fest-e:#8E8E93; --ev-f:#2A1838; --ev-h:#2A1838; --ev-e:#BF5AF2;
+  --warn:#FF453A; --warn-f:#3A1512; --now:#FF453A; --on-now:#FFFFFF;
+  --seg:#2C2C2E; --seg-on:#636366; --seg-on-ink:#FFFFFF; --tab-on:#FFFFFF; --tab-on-ink:#000000;
+  --scrim:rgba(0,0,0,.6); --shadow:0 10px 40px rgba(0,0,0,.6);
   color-scheme:dark}
 
 [hidden]{display:none!important}
@@ -279,6 +275,53 @@ button{cursor:pointer}
 .mitem .mono{font-size:13px;color:var(--ink-2);white-space:nowrap}
 .mitem span:last-child{font-weight:600;min-width:0;overflow-wrap:anywhere}
 @media (prefers-reduced-motion:reduce){.blk{transition:none}.blk:hover{transform:none}}
+
+/* ---- Design C: Klar (iOS-nah) ---- */
+body{font-feature-settings:"tnum"}
+.tb{border:0;background:transparent;grid-template-columns:1fr 1fr}
+.tb>div{border:0!important;padding:0 2px}
+.tb .name,.tb .sync{grid-column:1/-1}
+.tb .name strong{font-size:32px;font-weight:700;letter-spacing:-.025em}
+.tb strong{font-weight:600;letter-spacing:-.01em;font-size:17px}
+.tb .sync strong{font-size:14px;color:var(--warn);padding-top:0}
+.lbl{text-transform:none;letter-spacing:0;font-weight:500;font-size:12.5px}
+.btn{border:0;border-radius:10px}
+.btn.danger{background:var(--warn-f);color:var(--warn)}
+.nav .btn{border-radius:0}.nav .btn:first-child{border-radius:10px 0 0 10px}.nav .btn:last-child{border-radius:0 10px 10px 0}
+.seg{border:0;background:var(--seg);border-radius:9px;padding:2px}
+.seg button{border-radius:7px;color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--seg-on);color:var(--seg-on-ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.cd{border:0;border-radius:14px;padding:12px 16px}
+.cd .num{font-weight:700;letter-spacing:-.04em}
+.cd .txt b{font-size:16px;font-weight:600}
+.cd .wk i{border-radius:50%;width:8px;height:8px}
+.stats,.board,.month{border:0;border-radius:14px}
+.stat .val{font-weight:700;letter-spacing:-.02em}
+.alert{border:0;border-radius:14px}
+.tabs button{border:0;border-radius:12px;background:transparent}
+.tabs b{font-size:13px;font-weight:500;color:var(--ink-2)}
+.tabs span{font-size:12px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.tabs button[aria-pressed="true"]{background:var(--tab-on)}
+.tabs button[aria-pressed="true"] b,.tabs button[aria-pressed="true"] span{color:var(--tab-on-ink);opacity:1}
+.tabs button.today:not([aria-pressed="true"]){border:0}
+.tabs button.today:not([aria-pressed="true"]) b,.tabs button.today:not([aria-pressed="true"]) span{color:var(--now)}
+.dh,.corner{border-bottom:1px solid var(--line)}
+.dh b{font-weight:600;font-size:15px}
+.mwd{border-bottom:1px solid var(--line)}
+.mwd span{text-transform:none;letter-spacing:0;font-weight:500}
+.mlist{border-top:1px solid var(--line)}
+.mhead h2,.mlist h3{letter-spacing:-.02em;font-weight:700}
+.blk{border-radius:9px;border-left-width:4px}
+.blk.k-event{background:var(--ev-f)}
+.bt{letter-spacing:-.01em;overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto}
+.dh.today b,.dh.today span{color:var(--now)}
+.tag{text-transform:none;letter-spacing:0;font-size:11px}
+.chip{text-transform:none;letter-spacing:0;font-size:13px}
+.sh-top h2{font-weight:700;letter-spacing:-.02em}
+.sheet h3{text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink-2)}
+.opt{border:0;background:var(--paper)}
+.field input,.field select,.field textarea{border:0;background:var(--paper)}
+.ad-l{text-transform:none;letter-spacing:0}
 </style>
 </head>
 <body>
@@ -531,7 +574,7 @@ const mem = {};
 const lsGet = k => { if (k in mem) return mem[k]; try { return JSON.parse(localStorage.getItem(LS + k) || "null"); } catch { return null; } };
 const lsSet = (k, v) => { mem[k] = v; try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch {} };
 const docPath = k => `data/users/${uid}/wk-${k}`;
-const setSync = t => { $("#sync").textContent = t; };
+const setSync = t => { $("#sync").textContent = t; $("#sync").parentElement.hidden = t === "Auf dem iPhone"; };
 const syncOk = () => setSync(navigator.onLine === false ? "Auf dem iPhone · offline" : "Auf dem iPhone");
 
 function subscribe() {
@@ -1128,7 +1171,8 @@ function openSettings() {
   };
   $("#sExport").onclick = async () => {
     flush();
-    const data = {app: "studium-triathlon", version: 1, created: new Date().toISOString(), weeks: allWeekData()};
+    const cur = getSet();
+    const data = {app: "studium-triathlon", version: 2, created: new Date().toISOString(), settings: {exam: examKey(), model: cur.model || DEFAULT_MODEL}, weeks: allWeekData()};
     const json = JSON.stringify(data, null, 1);
     const name = "wochenplan-sicherung-" + keyOf(new Date()) + ".json";
     try {
@@ -1146,6 +1190,7 @@ function openSettings() {
       if (!data || data.app !== "studium-triathlon" || !data.weeks) throw 0;
       let n = 0;
       for (const [k, v] of Object.entries(data.weeks)) if (WEEK_RE.test(k)) { lsSet(k, normalize(v)); n++; }
+      if (data.settings && typeof data.settings === "object") { const v = getSet(); if (typeof data.settings.exam === "string") v.exam = data.settings.exam; if (typeof data.settings.model === "string" && data.settings.model) v.model = data.settings.model; putSet(v); }
       ws = normalize(lsGet(weekKey)); render();
       say(`${n} ${n === 1 ? "Woche" : "Wochen"} wiederhergestellt.`);
     } catch { say("Diese Datei ist keine gültige Sicherung."); }
