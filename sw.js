@@ -1,5 +1,5 @@
 /* Offline-Speicher für den Wochenplan. Bei jeder neuen Version VERSION hochzählen. */
-const VERSION = "wochenplan-v2";
+const VERSION = "wochenplan-v3";
 const ASSETS = [
   "./",
   "./index.html",

@@ -219,6 +219,14 @@ button{cursor:pointer}
 .status{font-size:14px;color:var(--ink-2);margin:0}
 .summary{margin:0;font-size:15px;line-height:1.5}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-weight:500;font-size:14px;z-index:80;max-width:calc(100% - 32px);box-shadow:var(--shadow)}
+/* Ganztägig */
+.ad-l{border-bottom:1.5px solid var(--line-2);font-family:var(--f-disp);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);display:flex;align-items:center;justify-content:flex-end;padding:3px 6px 3px 0;background:var(--sheet)}
+.ad{border-left:1px solid var(--line);border-bottom:1.5px solid var(--line-2);padding:3px;display:flex;flex-direction:column;gap:2px;min-width:0;min-height:26px;background:var(--sheet)}
+.adc{display:block;width:100%;border:0;text-align:left;font-size:11.5px;font-weight:600;padding:3px 6px;border-radius:4px;background:var(--ev-e);color:var(--sheet);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day .adc{font-size:14px;padding:6px 10px}
+.mp.allday{background:var(--ev-e);color:var(--sheet);border-left-color:var(--ev-e);font-weight:600}
+.check{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;padding:4px 0;cursor:pointer}
+.check input{width:22px;height:22px;accent-color:var(--accent);margin:0}
 /* Countdown Prüfungsphase */
 .cd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border:1.5px solid var(--ink);background:var(--sheet);padding:8px 14px}
 .cd .num{font-family:var(--f-disp);font-weight:700;font-size:42px;line-height:1;font-variant-numeric:tabular-nums;color:var(--warn)}
@@ -399,7 +407,7 @@ function normalize(d) {
     if (TPL_BY[id] && Number.isFinite(m.day) && Number.isFinite(m.start) && Number.isFinite(m.end)) w.moves[id] = {day: m.day, start: m.start, end: m.end};
   if (Array.isArray(d.events)) for (const e of d.events)
     if (e && e.id && Number.isFinite(e.day) && Number.isFinite(e.start) && Number.isFinite(e.end) && e.end > e.start)
-      w.events.push({id: String(e.id), title: String(e.title || "Termin").slice(0, 80), day: e.day, start: e.start, end: e.end});
+      w.events.push({id: String(e.id), title: String(e.title || "Termin").slice(0, 80), day: e.day, start: e.start, end: e.end, ...(e.allDay === true ? {allDay: true} : {})});
   return w;
 }
 let ws = emptyWeek();
@@ -411,7 +419,7 @@ function items() {
     out.push({...b, day: mv ? mv.day : b.d, start: mv ? mv.start : b.s, end: mv ? mv.end : b.e,
       moved: !!mv, cancelled: !!ws.cancels[b.id], done: !!ws.done[b.id], src: "tpl"});
   }
-  for (const e of ws.events) out.push({id: e.id, t: e.title, k: "event", day: e.day, start: e.start, end: e.end, src: "ev"});
+  for (const e of ws.events) if (!e.allDay) out.push({id: e.id, t: e.title, k: "event", day: e.day, start: e.start, end: e.end, src: "ev"});
   return out;
 }
 
@@ -580,7 +588,7 @@ function weekEvents(key) {
 }
 function eventsOn(date) {
   const key = keyOf(mondayOf(date)), d = (date.getDay() + 6) % 7;
-  return weekEvents(key).filter(e => e.day === d).map(e => ({...e, key})).sort((a, b) => a.start - b.start);
+  return weekEvents(key).filter(e => e.day === d).map(e => ({...e, key})).sort((a, b) => (b.allDay ? 1 : 0) - (a.allDay ? 1 : 0) || a.start - b.start);
 }
 async function initStore() {
   mode = "local";
@@ -655,7 +663,7 @@ function renderMonth() {
     if (k === todayK) cls.push("today");
     if (k === selK) cls.push("sel");
     const isExam = k === examKey();
-    const pills = (isExam ? `<span class="mp exam">Prüfungsphase</span>` : "") + evs.slice(0, 3).map(e => `<span class="mp"><b>${hm(e.start)}</b> ${esc(e.title)}</span>`).join("")
+    const pills = (isExam ? `<span class="mp exam">Prüfungsphase</span>` : "") + evs.slice(0, 3).map(e => e.allDay ? `<span class="mp allday">${esc(e.title)}</span>` : `<span class="mp"><b>${hm(e.start)}</b> ${esc(e.title)}</span>`).join("")
       + (evs.length > 3 ? `<span class="more">+${evs.length - 3} weitere</span>` : "");
     const dots = (isExam ? '<i class="exam"></i>' : "") + evs.slice(0, 3).map(() => "<i></i>").join("");
     const lbl = longDate(d) + (evs.length ? `, ${evs.length} ${evs.length === 1 ? "Termin" : "Termine"}` : "");
@@ -663,7 +671,7 @@ function renderMonth() {
   }
   const sel = eventsOn(monthSel);
   const list = sel.length
-    ? sel.map(e => `<button class="mitem" data-evopen="${e.id}" data-evkey="${e.key}"><span class="mono">${hm(e.start)}–${hm(e.end)}</span><span>${esc(e.title)}</span></button>`).join("")
+    ? sel.map(e => `<button class="mitem" data-evopen="${e.id}" data-evkey="${e.key}"><span class="mono">${e.allDay ? "ganztägig" : hm(e.start) + "–" + hm(e.end)}</span><span>${esc(e.title)}</span></button>`).join("")
     : `<p class="empty">Keine eigenen Termine an diesem Tag.</p>`;
   $("#month").innerHTML = `
     <div class="mhead"><h2>${MONTHS[first.getMonth()]} ${first.getFullYear()}</h2><span>${count ? count + (count === 1 ? " eigener Termin" : " eigene Termine") : "Noch keine eigenen Termine"} · Uni, Lernen und Training ausgeblendet</span></div>
@@ -742,6 +750,10 @@ function renderGrid(list, conf) {
   let html = "";
   if (view === "week") {
     html += `<div class="corner"></div>` + days.map(d => `<div class="dh${isCurrent() && d === todayIdx() ? " today" : ""}"><b>${DAYS[d]}</b><span>${ddmm(addDays(weekMon, d))}</span></div>`).join("");
+  }
+  const ad = days.map(d => ws.events.filter(e => e.allDay && e.day === d));
+  if (ad.some(a => a.length)) {
+    html += `<div class="ad-l">ganzt.</div>` + ad.map(a => `<div class="ad">${a.map(e => `<button class="adc" data-evopen="${e.id}" data-evkey="${weekKey}">${esc(e.title)}</button>`).join("")}</div>`).join("");
   }
   let times = "";
   for (let t = rs; t <= re; t += 60) if (t > rs) times += `<span style="top:${(t - rs) / 60 * HH}px">${hm(t)}</span>`;
@@ -852,25 +864,29 @@ function openEvent(id, presetDay, presetDate, key = weekKey) {
   let h = head("event", "Eigener Termin", ev ? ev.title : "Neuer Termin");
   h += `<form class="form" id="evForm" novalidate>
     <label class="field full"><span class="lbl">Titel</span><input id="eTitle" maxlength="80" required value="${esc(ev ? ev.title : "")}" placeholder="z. B. Zahnarzt, Referat, Klausur" autofocus></label>
+    <label class="check full"><input id="eAll" type="checkbox"${ev && ev.allDay ? " checked" : ""}> Ganztägig</label>
     <label class="field"><span class="lbl">Datum</span><input id="eDate" type="date" required value="${date}"></label>
-    <label class="field"><span class="lbl">Von</span><input id="eStart" type="time" step="900" required value="${hm(ev ? ev.start : 600)}"></label>
-    <label class="field"><span class="lbl">Bis</span><input id="eEnd" type="time" step="900" required value="${hm(ev ? ev.end : 660)}"></label>
+    <label class="field etime"${ev && ev.allDay ? " hidden" : ""}><span class="lbl">Von</span><input id="eStart" type="time" step="900" required value="${hm(ev && !ev.allDay ? ev.start : 600)}"></label>
+    <label class="field etime"${ev && ev.allDay ? " hidden" : ""}><span class="lbl">Bis</span><input id="eEnd" type="time" step="900" required value="${hm(ev && !ev.allDay ? ev.end : 660)}"></label>
     <p class="status full" id="eErr" hidden></p>
     <div class="row full"><button class="btn primary" type="submit">Speichern</button>${ev ? `<button class="btn danger" type="button" data-delev="${ev.id}" data-evkey="${key}">Löschen</button>` : ""}</div>
   </form>`;
   openSheet(h);
   $("#evForm").addEventListener("submit", e => { e.preventDefault(); saveEvent(ev, key); });
+  $("#eAll").addEventListener("change", e => { document.querySelectorAll(".etime").forEach(l => { l.hidden = e.target.checked; }); });
 }
 async function saveEvent(ev, origKey = weekKey) {
   const title = $("#eTitle").value.trim(), dv = $("#eDate").value, sv = $("#eStart").value, evv = $("#eEnd").value;
   const err = t => { const p = $("#eErr"); p.textContent = t; p.hidden = false; };
   if (!title) return err("Gib dem Termin einen Titel.");
-  if (!dv || !sv || !evv) return err("Datum, Beginn und Ende ausfüllen.");
-  const s = toM(sv), e = toM(evv);
+  const allDay = $("#eAll").checked;
+  if (!dv) return err("Wähle ein Datum.");
+  if (!allDay && (!sv || !evv)) return err("Beginn und Ende ausfüllen.");
+  const s = allDay ? 0 : toM(sv), e = allDay ? 1440 : toM(evv);
   if (e <= s) return err("Das Ende muss nach dem Beginn liegen.");
   const [y, mo, d] = dv.split("-").map(Number);
   const dt = new Date(y, mo - 1, d), key = keyOf(mondayOf(dt)), day = (dt.getDay() + 6) % 7;
-  const rec = {id: ev ? ev.id : "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title, day, start: s, end: e};
+  const rec = {id: ev ? ev.id : "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title, day, start: s, end: e, ...(allDay ? {allDay: true} : {})};
   const rm = w => { w.events = w.events.filter(x => x.id !== rec.id); };
   const removeElsewhere = ev && origKey !== weekKey && origKey !== key;
   if (ev && origKey === weekKey) ws.events = ws.events.filter(x => x.id !== ev.id);
@@ -924,12 +940,12 @@ Regeln:
 Wochenplan (id | Tag | Zeit | Typ | Titel | Status):
 ${scheduleText(items())}
 
-Bens Anliegen:
+${(() => { const a = ws.events.filter(e => e.allDay); return a.length ? "Ganztägige Termine (blockieren keine Uhrzeit, nur zur Info):\n" + a.map(e => `${DAYS[e.day]} ${ddmm(addDays(weekMon, e.day))} | ${e.title}`).join("\n") + "\n\n" : ""; })()}Bens Anliegen:
 """${q}"""
 
 Antworte ausschließlich mit JSON in genau dieser Form:
 {"summary":"2 bis 4 Sätze auf Deutsch, direkt an Ben","changes":[{"id":"id aus der Liste","action":"move oder cancel","day":0,"start":"HH:MM","end":"HH:MM","reason":"kurzer Grund"}],"newEvents":[{"title":"Titel","day":0,"start":"HH:MM","end":"HH:MM"}]}
-day: 0 = Montag bis 6 = Sonntag. "move" verschiebt oder kürzt einen Block auf die neue Zeit, "cancel" lässt ihn diese Woche ausfallen (day/start/end dann weglassen). Nur Blöcke vom Typ lern oder train ändern. newEvents nur für Termine, die Ben in seinem Anliegen konkret nennt und die noch nicht im Plan stehen. Leere Listen, wenn nichts zu ändern ist.`;
+day: 0 = Montag bis 6 = Sonntag. "move" verschiebt oder kürzt einen Block auf die neue Zeit, "cancel" lässt ihn diese Woche ausfallen (day/start/end dann weglassen). Nur Blöcke vom Typ lern oder train ändern. Ganztägige neue Termine als {"title":"Titel","day":0,"allDay":true}. newEvents nur für Termine, die Ben in seinem Anliegen konkret nennt und die noch nicht im Plan stehen. Leere Listen, wenn nichts zu ändern ist.`;
 }
 let proposal = [];
 function parseT(v) { return typeof v === "string" && /^\d{1,2}:\d{2}$/.test(v) ? toM(v) : NaN; }
@@ -937,7 +953,8 @@ function validate(res) {
   const out = [];
   for (const ne of Array.isArray(res.newEvents) ? res.newEvents : []) {
     const d = Number(ne.day), s = parseT(ne.start), e = parseT(ne.end);
-    if (d >= 0 && d <= 6 && s < e && ne.title) out.push({kind: "event", title: String(ne.title).slice(0, 80), d, s, e});
+    if (ne.allDay === true && d >= 0 && d <= 6 && ne.title) out.push({kind: "event", allDay: true, title: String(ne.title).slice(0, 80), d, s: 0, e: 1440});
+    else if (d >= 0 && d <= 6 && s < e && ne.title) out.push({kind: "event", title: String(ne.title).slice(0, 80), d, s, e});
   }
   for (const c of Array.isArray(res.changes) ? res.changes : []) {
     const b = TPL_BY[String(c.id)];
@@ -1046,7 +1063,7 @@ function showProposal(res) {
     h += `<ul class="props">${proposal.map((p, i) => {
       const b = p.id && TPL_BY[p.id], cur = p.id && items().find(x => x.id === p.id);
       let line;
-      if (p.kind === "event") line = `<b>Neuer Termin: ${esc(p.title)}</b> · ${DAYS[p.d]} <span class="mono">${hm(p.s)}–${hm(p.e)}</span>`;
+      if (p.kind === "event") line = `<b>Neuer Termin: ${esc(p.title)}</b> · ${DAYS[p.d]} <span class="mono">${p.allDay ? "ganztägig" : hm(p.s) + "–" + hm(p.e)}</span>`;
       else if (p.kind === "cancel") line = `<b>${esc(b.t)}</b> fällt aus`;
       else line = `<b>${esc(b.t)}</b> · <span class="mono">${DAYS[cur.day]} ${hm(cur.start)}–${hm(cur.end)} → ${DAYS[p.d]} ${hm(p.s)}–${hm(p.e)}</span>`;
       return `<li><label><input type="checkbox" checked data-pi="${i}"><span>${line}${p.reason ? `<small>${esc(p.reason)}</small>` : ""}</span></label></li>`;
@@ -1130,7 +1147,7 @@ function applyProposal() {
   const sel = [...document.querySelectorAll("[data-pi]")].filter(c => c.checked).map(c => proposal[+c.dataset.pi]);
   if (!sel.length) { toast("Nichts ausgewählt"); return; }
   for (const p of sel) {
-    if (p.kind === "event") ws.events.push({id: "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title: p.title, day: p.d, start: p.s, end: p.e});
+    if (p.kind === "event") ws.events.push({id: "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title: p.title, day: p.d, start: p.s, end: p.e, ...(p.allDay ? {allDay: true} : {})});
     else if (p.kind === "cancel") { ws.cancels[p.id] = true; delete ws.done[p.id]; }
     else setTime(p.id, p.d, p.s, p.e);
   }
