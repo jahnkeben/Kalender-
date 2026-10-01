@@ -261,11 +261,17 @@ button{cursor:pointer}
 .mdots{display:none;gap:3px;justify-content:center;min-height:6px}
 .mdots i{width:6px;height:6px;border-radius:50%;background:var(--ev-e)}
 .mc.out .mp,.mc.out .mdots i{opacity:.55}
+.more.ph{display:none}
 @media (max-width:640px){
-  .mc{min-height:58px;align-items:center;padding:5px 2px}
-  .mn{align-self:center}
-  .mpills{display:none}
-  .mdots{display:flex}
+  .mc{min-height:76px;padding:3px 1px 4px;gap:2px}
+  .mn{align-self:center;width:24px;height:24px;font-size:14.5px}
+  .mp{font-size:9.5px;line-height:1.25;padding:1px 2px;border-left-width:2px;border-radius:3px;text-overflow:clip;letter-spacing:-.01em}
+  .mp b{display:none}
+  .mpills{gap:1px}
+  .mpills .mp:nth-child(n+3){display:none}
+  .more{font-size:9.5px;padding-left:2px;line-height:1.2}
+  .more.dk{display:none}
+  .more.ph{display:block}
 }
 .mlist{border-top:1.5px solid var(--ink);padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}
 .mlist h3{margin:0;font-family:var(--f-disp);font-size:21px;font-weight:600}
@@ -663,9 +669,11 @@ function renderMonth() {
     if (k === todayK) cls.push("today");
     if (k === selK) cls.push("sel");
     const isExam = k === examKey();
-    const pills = (isExam ? `<span class="mp exam">Prüfungsphase</span>` : "") + evs.slice(0, 3).map(e => e.allDay ? `<span class="mp allday">${esc(e.title)}</span>` : `<span class="mp"><b>${hm(e.start)}</b> ${esc(e.title)}</span>`).join("")
-      + (evs.length > 3 ? `<span class="more">+${evs.length - 3} weitere</span>` : "");
-    const dots = (isExam ? '<i class="exam"></i>' : "") + evs.slice(0, 3).map(() => "<i></i>").join("");
+    const entries = (isExam ? [`<span class="mp exam">Prüfungsphase</span>`] : []).concat(evs.map(e => e.allDay ? `<span class="mp allday">${esc(e.title)}</span>` : `<span class="mp"><b>${hm(e.start)}</b> ${esc(e.title)}</span>`));
+    const pills = entries.slice(0, 3).join("")
+      + (entries.length > 3 ? `<span class="more dk">+${entries.length - 3} weitere</span>` : "")
+      + (entries.length > 2 ? `<span class="more ph">+${entries.length - 2}</span>` : "");
+    const dots = "";
     const lbl = longDate(d) + (evs.length ? `, ${evs.length} ${evs.length === 1 ? "Termin" : "Termine"}` : "");
     cells += `<button class="${cls.join(" ")}" data-mday="${k}" aria-label="${lbl}" aria-pressed="${k === selK}"><span class="mn">${d.getDate()}</span><span class="mpills">${pills}</span><span class="mdots">${dots}</span></button>`;
   }
